@@ -1,2 +1,22 @@
 # kindleThis
 Telegram Bot that helps you send ebooks to your kindle.
+
+Commands:
+/start : Bot will give you the start message.
+/set_kindle_email: Bot will ask you for the email you want to send the books you ask for.
+/search : The bot will listen to your requested books.
+
+Features:
+You can request any book, the bot will search for it and 
+if ti findws it, will download it and send it to any email 
+you supply (normally you'd put your kindle account so you 
+receive it directly to your kindle device)
+
+NOTE 1: Your amazon account won't let you receive ebooks from 
+any email account, so you have to go to your kindle preferences page and add this address as a trsuted one:
+green.panda.3.1415@gmail.com
+I'll be using that address for now, let's see how that works.
+
+NOTE 2: When you request for any book, remember to separate 
+the title from the author with a comma, if the title has a comma inside the title (I just realized that scenario is not 
+beign covered so it probably will fail, or maybe it will download a different book from the one you wanted, I'll add it to the TO-DOs)

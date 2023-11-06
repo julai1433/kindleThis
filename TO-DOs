@@ -1,0 +1,13 @@
+
+CRITICAL (Wont' work at all til this is done):
+
+FUNCTIONAL (wont' work well until you do it):
+- What happens when the title of the book has commas in it? 
+
+OPTIMAL (would be cool):
+- Test headless mode
+- If the book is found, take a screenshot and send it to the user to confirm it's the book they're looking for.
+- Make it able to receive the link to the book instead of the name-author
+
+DREAMS (I'm not really doing it):
+- Add more sources to get ebooks
