@@ -8,6 +8,7 @@ OPTIMAL (would be cool):
 - Test headless mode
 - If the book is found, take a screenshot and send it to the user to confirm it's the book they're looking for.
 - Make it able to receive the link to the book instead of the name-author
+- Save a data base with the user id's and their email accounts, so the bot don't have to ask for it every time you use it.
 
 DREAMS (I'm not really doing it):
 - Add more sources to get ebooks
