@@ -17,15 +17,17 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 from unidecode import unidecode
+from decouple import AutoConfig
+config = AutoConfig('.env')
 
 
-LIBRARY = os.environ.get('local_library_path')
+LIBRARY = config('local_library_path')
 BOOKS_SUPPLIER = "https://ww3.lectulandia.com/"
 BIONIC_SITE = "https://app.bionic-reading.com/"
 
-EMAIL_ADDR = os.environ.get('sender_email_addr')
-EMAIL_PSWD = os.environ.get('sender_email_pswd')
-KINDLE_EMAIL = os.environ.get('my_kindle_email')
+EMAIL_ADDR = config('sender_email_addr')
+EMAIL_PSWD = config('sender_email_pswd')
+KINDLE_EMAIL = config('my_kindle_email')
 
 # - SEARCH & DOWNLOAD.
 #     - Description: Searches and downloads an ebook on a website and stores it in the library.

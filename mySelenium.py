@@ -13,9 +13,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.firefox.options import Options
 import pathlib
-import os
+from decouple import AutoConfig
+config = AutoConfig('.env')
 
-DOWNLOADS_PATH = os.environ.get('local_library_path')
+DOWNLOADS_PATH = config('local_library_path')
 
 def CallBrowser(url, logger=None):
     print('Configuring Firefox...')

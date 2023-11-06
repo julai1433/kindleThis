@@ -1,13 +1,14 @@
 import logging
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext, CallbackQueryHandler
-import os
+from decouple import AutoConfig
+config = AutoConfig('.env')
 
 # Import your existing script here
 import Library
 
 # Telegram Bot Token obtained from BotFather
-TOKEN = os.environ.get('kindle_this_token')
+TOKEN = config('kindle_this_token')
 
 # Initialize the Telegram Bot
 updater = Updater(token=TOKEN, use_context=True)
@@ -25,11 +26,12 @@ user_kindle_emails = {}
 
 # Command handler to start the bot
 def start(update: Update, context: CallbackContext):
-    update.message.reply_text("Welcome to your Book Scraper Bot! Please use /set_kindle_email to set your Kindle email address.")
+    update.message.reply_text("Welcome to kindleThis Bot! Please use /set_kindle_email to set your Kindle email address.")
 
 # Command handler to set Kindle email
 def set_kindle_email(update: Update, context: CallbackContext):
     update.message.reply_text("Please enter your Kindle email address.")
+    update.message.reply_text("Remember to add green.panda.3.1415@gmail.com as a trusted email account on your kindle page preferences")
     return SET_KINDLE_EMAIL
 
 # Function to save Kindle email address and move to the search state
@@ -50,6 +52,7 @@ def search(update: Update, context: CallbackContext):
         return SET_KINDLE_EMAIL  # Go back to SET_KINDLE_EMAIL state
 
     update.message.reply_text("Please enter the book title and author, separated by a comma (e.g., 'Book Title, Author').")
+    update.message.reply_text("Like this: 'El libro Vaquero, Señor Vaquero'.")
 
 # Define a message handler for receiving the book query
 def receive_book_query(update: Update, context: CallbackContext):
@@ -78,7 +81,7 @@ def receive_book_query(update: Update, context: CallbackContext):
                 except:
                     update.message.reply_text("There was an error while sending it, y soporta panzona")
             else:
-                update.message.reply_text("Couldn't find the book, try another one.")           
+                update.message.reply_text("Couldn't find the book, try another one... or just go and pay for it, you know, like a decent human being.")           
         else:
             update.message.reply_text("Please set your Kindle email address using /set_kindle_email before searching for books.")
     except Exception as e:
