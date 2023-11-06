@@ -40,3 +40,17 @@ If you want to run this bot into your local environment:
     sender_email_pswd= The password for the email
     local_library_path= The absolut path to the Library directory, inn my case it is the project root + "/Library/"
 - Install decouple and unicode with pip; individually or running pip install -r requirements.txt.
+
+
+## Structure of the project:
+    - Library/ : Directory where the downloaded books will be saved.
+    - mySelenium.py : This is my personal library for Selenium, conatins several methods for scrapping.
+    - Library.py : This is the library containing the methods for searching, download and send to kindle.
+    - kindleThis.py : Main code for the Telegram Bot.
+
+
+
+
+
+
+
