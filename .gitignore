@@ -1,6 +1,7 @@
 #Local libray:
 /Library/*
 eraser.py
+user_data.db
 
 
 # Byte-compiled / optimized / DLL files
