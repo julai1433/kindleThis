@@ -239,8 +239,8 @@ def getBookDataFromArgs():
     return info
 
 def getBookDataFromQuery(query):
-    if ',' in query:
-        info = query.split(',')
+    if ';' in query:
+        info = query.split(';')
     else:
         info = [query, "AUTHOR UNKNOWN"]
     info[0] = info[0].strip()

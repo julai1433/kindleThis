@@ -50,9 +50,7 @@ def search(update: Update, context: CallbackContext):
     if user_id not in user_kindle_emails:
         update.message.reply_text("Please set your Kindle email address using /set_kindle_email before searching for books.")
         return SET_KINDLE_EMAIL  # Go back to SET_KINDLE_EMAIL state
-
-    update.message.reply_text("Please enter the book title and author, separated by a comma (e.g., 'Book Title, Author').")
-    update.message.reply_text("Like this: 'El libro Vaquero, Señor Vaquero'.")
+    update.message.reply_text("Please enter the book title and author, separated by a semicolon (e.g., 'Book Title; Author').")
 
 # Define a message handler for receiving the book query
 def receive_book_query(update: Update, context: CallbackContext):
