@@ -9,6 +9,7 @@ FUNCTIONAL (wont' work well until you do it):
 OPTIMAL (would be cool):
 - If the book is found, take a screenshot and send it to the user to confirm it's the book they're looking for.
 - Make it able to receive the link to the book instead of the name-author
+- That the user can send an ebook file instead of searching it, so the bot send it to their kindle.
 
 DREAMS (I'm not really doing it):
-- Add more sources to get ebooks
+- Add more sources to get ebooks, if it doesn't find it by scrapping, a torrent client may be a good idea, even as a first search
