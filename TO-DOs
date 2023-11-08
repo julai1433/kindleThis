@@ -2,13 +2,13 @@
 CRITICAL (Wont' work at all til this is done):
 
 FUNCTIONAL (wont' work well until you do it):
-- What happens when the title of the book has commas in it? 
+- Put this projecct in a server.
+- Create a docker image for this project and set the CI/CD from its github repo.
+- Figure out the best way to access remote storage for the Library, so the server will only take care of the bot, not the library storage.
 
 OPTIMAL (would be cool):
-- Test headless mode
 - If the book is found, take a screenshot and send it to the user to confirm it's the book they're looking for.
 - Make it able to receive the link to the book instead of the name-author
-- Save a data base with the user id's and their email accounts, so the bot don't have to ask for it every time you use it.
 
 DREAMS (I'm not really doing it):
 - Add more sources to get ebooks
