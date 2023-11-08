@@ -29,11 +29,14 @@ EMAIL_ADDR = config('sender_email_addr')
 EMAIL_PSWD = config('sender_email_pswd')
 KINDLE_EMAIL = config('my_kindle_email')
 
+HEADLESS_MODE = config('silent_mode')
+
+
 # - SEARCH & DOWNLOAD.
 #     - Description: Searches and downloads an ebook on a website and stores it in the library.
 #     - Input: Tuple with two Strings (book's name and author)
 #     - Output: Boolean True if succeded on the task, False elseway
-def searchAndDownload(book_data):
+def searchAndDownload(book_data, silent_mode=HEADLESS_MODE):
 #     - Steps:
 #         - Go to the source of ebooks to find the book.
 #         - First looking for ebooks, then for PDFs.
@@ -46,9 +49,10 @@ def searchAndDownload(book_data):
             print("Book was already in your library")
             return True
         output = False
-        mS.CallBrowser(BOOKS_SUPPLIER)
+        mS.CallBrowser(BOOKS_SUPPLIER, silent_mode=silent_mode)
         mS.ClickByClass("formWrapper")
-        book_data_seek = book_name+" "+book_author if book_author != "AUTHOR UNKNOWN" else book_name
+        #book_data_seek = book_name+" "+book_author if book_author != "AUTHOR UNKNOWN" else book_name
+        book_data_seek = book_name
         mS.FillBlankByPath("/html/body/div/header/nav/ul/li[4]/form/input", book_data_seek)
         cond=True
         waitTime = 180
@@ -67,8 +71,7 @@ def searchAndDownload(book_data):
             results = mS.FindElementsByClass("card")
             if len(results):
                 for result in results:
-                    book_author_str = book_author if book_author != "AUTHOR UNKNOWN" else ""
-                    #TODO ADD CONFIRMATION STEP SENDING SCREENSHOT OF THE BOOK TO THE USER (THIS FOR THE TELEGRAM BOT)
+                    book_author_str = book_author if book_author != "AUTHOR UNKNOWN" else book_name
                     if book_name in result.text and book_author_str in result.text:
                         result.click()
                         mS.ClickById("download1")

@@ -88,18 +88,21 @@ def receive_book_query(update: Update, context: CallbackContext):
         if kindle_email:
             book_data = Library.getBookDataFromQuery(book_query)
             book_name = book_data[0]
+            update.message.reply_text("Searching for " + book_data[0] + " from " + book_data[1])
             try:
                 result = False
                 result = Library.searchAndDownload(book_data)
             except:
                 update.message.reply_text("There was an error while seeking for your book, y soporta panzona")
             if result:
-                update.message.reply_text("Ebook found! :O. Sending it to your Kindle...")
+                update.message.reply_text("'" + book_data[0] + " found!")
+                update.message.reply_text("Sending the book to your Kindle...")
                 try:
                     if Library.sendToKindle(book_name, kindle_email):
-                        update.message.reply_text("Done! Book was sent to your Kindle")
+                        update.message.reply_text("Done! '" + book_data[0] + "' from '" + book_data[1] + "' was sent to " + kindle_email)
+                        update.message.reply_text("I want to remind you that this is illegal, we both are probably going to jail ):")
                     else:
-                        update.message.reply_text("Couldn't send it lol, y soporta panzona")
+                        update.message.reply_text("Couldn't send it")
                 except:
                     update.message.reply_text("There was an error while sending it, y soporta panzona")
             else:

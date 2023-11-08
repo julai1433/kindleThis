@@ -18,10 +18,9 @@ config = AutoConfig('.env')
 
 DOWNLOADS_PATH = config('local_library_path')
 
-def CallBrowser(url, logger=None):
+def CallBrowser(url, logger=None, silent_mode=False):
     print('Configuring Firefox...')
     firefox_options = webdriver.FirefoxOptions()
-
     firefox_profile = webdriver.FirefoxProfile()
     firefox_profile.set_preference('browser.download.folderList', 2)
     firefox_profile.set_preference('browser.download.dir', str(pathlib.Path(DOWNLOADS_PATH).absolute()))
@@ -39,7 +38,7 @@ def CallBrowser(url, logger=None):
 
     # Set up Firefox options with the configured profile    
     firefox_options.profile = firefox_profile
-    firefox_options.headless = False
+    firefox_options.headless = silent_mode
     firefox_options.add_argument('--private')
     
     
