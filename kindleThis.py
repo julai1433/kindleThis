@@ -1,17 +1,15 @@
 import logging
+import sqlite3
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext, CallbackQueryHandler
 from decouple import AutoConfig
-config = AutoConfig('.env')
-
-# Import your existing script here
 import Library
 
-# Telegram Bot Token obtained from BotFather
-TOKEN = config('kindle_this_token')
+#Load config file
+config = AutoConfig('.env')
 
 # Initialize the Telegram Bot
-updater = Updater(token=TOKEN, use_context=True)
+updater = Updater(token=config('kindle_this_token'), use_context=True)
 dispatcher = updater.dispatcher
 
 # Enable logging for debugging purposes
@@ -24,33 +22,59 @@ SET_KINDLE_EMAIL, SEARCH_BOOK = range(2)
 # Dictionary to store user Kindle email addresses
 user_kindle_emails = {}
 
+#Method that refreshes the user_kindle_emails dict with the ones in the database
+def copy_data_from_database_to_dictionary():
+    connection = sqlite3.connect('user_data.db')
+    cursor = connection.cursor()
+    cursor.execute("SELECT user_id, kindle_email FROM users")
+    rows = cursor.fetchall()
+    connection.close()
+    for row in rows:
+        user_id, kindle_email = row
+        user_kindle_emails[user_id] = kindle_email
+copy_data_from_database_to_dictionary()
+
+#Method that sets the email of certain user_id in the database
+def set_email_to_db(user, email):
+    connection = sqlite3.connect('user_data.db')
+    cursor = connection.cursor()
+    cursor.execute("INSERT OR REPLACE INTO users (user_id, kindle_email) VALUES (?, ?)", (user, email))
+    connection.commit()
+    connection.close()
+
 # Command handler to start the bot
 def start(update: Update, context: CallbackContext):
-    update.message.reply_text("Welcome to kindleThis Bot! Please use /set_kindle_email to set your Kindle email address.")
+    user_id = update.message.from_user.id
+    if user_id not in user_kindle_emails:
+        update.message.reply_text("Welcome to kindleThis Bot! Please use /set_kindle_email to set your Kindle email address.")
+    else:
+        update.message.reply_text("Welcome back! You can now use /search to start searching for books.")
 
 # Command handler to set Kindle email
 def set_kindle_email(update: Update, context: CallbackContext):
     update.message.reply_text("Please enter your Kindle email address.")
-    update.message.reply_text("Remember to add green.panda.3.1415@gmail.com as a trusted email account on your kindle page preferences")
     return SET_KINDLE_EMAIL
 
 # Function to save Kindle email address and move to the search state
 def save_kindle_email(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
-    user_kindle_emails[user_id] = update.message.text
-
+    email = update.message.text
+    set_email_to_db(user_id, email)
+    copy_data_from_database_to_dictionary()
     update.message.reply_text("Kindle email address set to: " + update.message.text)
+    update.message.reply_text("Remember to add green.panda.3.1415@gmail.com as a trusted email account on your kindle page preferences")
     update.message.reply_text("You can now use /search to start searching for books.")
-
     return SEARCH_BOOK  # Move to the SEARCH_BOOK state
 
 # Command handler to search for books
 def search(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
+    copy_data_from_database_to_dictionary()
     if user_id not in user_kindle_emails:
         update.message.reply_text("Please set your Kindle email address using /set_kindle_email before searching for books.")
         return SET_KINDLE_EMAIL  # Go back to SET_KINDLE_EMAIL state
     update.message.reply_text("Please enter the book title and author, separated by a semicolon (e.g., 'Book Title; Author').")
+    return SEARCH_BOOK
 
 # Define a message handler for receiving the book query
 def receive_book_query(update: Update, context: CallbackContext):
@@ -91,18 +115,14 @@ def error(update: Update, context: CallbackContext):
 
 # Create a ConversationHandler for setting Kindle email
 kindle_email_conversation = ConversationHandler(
-    entry_points=[CommandHandler("set_kindle_email", set_kindle_email)],
+    entry_points=[CommandHandler("start", start), CommandHandler("search", search), CommandHandler("set_kindle_email", set_kindle_email)],
     states={
         SET_KINDLE_EMAIL: [MessageHandler(Filters.text & ~Filters.command, save_kindle_email)],
         SEARCH_BOOK: [MessageHandler(Filters.text & ~Filters.command, receive_book_query)]
     },
     fallbacks=[]
 )
-
 # Set up command and message handlers and conversation handler
-dispatcher.add_handler(CommandHandler("start", start))
-dispatcher.add_handler(CommandHandler("search", search))
-# dispatcher.add_handler(MessageHandler(Filters.text, receive_book_query))
 dispatcher.add_handler(kindle_email_conversation)
 dispatcher.add_error_handler(error)
 
