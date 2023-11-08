@@ -1,6 +1,7 @@
 # kindleThis
 Telegram Bot that helps you find/download/send ebooks to your kindle.
 
+
 ## Commands:
 
 /start : Bot will give you the start message.
@@ -47,6 +48,11 @@ If you want to run this bot into your local environment:
     - local_library_path= The absolut path to the Library directory, inn my case it is the project root + "/Library/"
 - Install decouple and unicode with pip; individually or running pip install -r requirements.txt.
 
+
+## 
+At the moment, this bot uses 'Lectulandia' as its only source, if the book is not there, the bot won't find it; if the page goes down, the bot won't work (Unless the books has been searched and downloaded before and it's in the local Library).
+
+Because of the last point, this bot finds mostly ebooks in spanish.
 
 
 
