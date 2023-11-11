@@ -46,7 +46,7 @@ If you want to run this bot into your local environment:
     - sender_email_addr= The email address you'll be sending the ebooks, in my case is "green.panda.3.1415@gmail.com"
     - sender_email_pswd= The password for the email
     - local_library_path= The absolut path to the Library directory, inn my case it is the project root + "/Library/"
-- Install decouple and unicode with pip; individually or running pip install -r requirements.txt.
+- Install dependencies running pip install -r requirements.txt.
 
 
 ## 
