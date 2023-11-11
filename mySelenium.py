@@ -13,10 +13,11 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.firefox.options import Options
 import pathlib
-from decouple import AutoConfig
-config = AutoConfig('.env')
+import os
 
-DOWNLOADS_PATH = config('local_library_path')
+# Dynamically set the BASE_PATH
+BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+DOWNLOADS_PATH = os.path.join( BASE_PATH, '/Library/')
 
 def CallBrowser(url, logger=None, silent_mode=False):
     print('Configuring Firefox...')

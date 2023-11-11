@@ -21,7 +21,9 @@ from decouple import AutoConfig
 config = AutoConfig('.env')
 
 
-LIBRARY = config('local_library_path')
+# Dynamically set the BASE_PATH
+BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+LIBRARY = os.path.join( BASE_PATH, '/Library/')
 BOOKS_SUPPLIER = "https://ww3.lectulandia.com/"
 BIONIC_SITE = "https://app.bionic-reading.com/"
 
