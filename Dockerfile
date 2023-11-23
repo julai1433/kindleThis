@@ -1,5 +1,5 @@
 # Use the official Python image for ARM architecture
-FROM python:3.8-slim
+FROM python:latest
 
 # Set the working directory
 WORKDIR /app
