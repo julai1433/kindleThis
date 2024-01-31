@@ -19,11 +19,15 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 # Define states for the conversation
 SET_KINDLE_EMAIL, SEARCH_BOOK = range(2)
 
+CHECK_BOOK, DONATION = range(2)
+
 # Dictionary to store user Kindle email addresses
 user_kindle_emails = {}
 
+user_email = ''
+
 #Method that refreshes the user_kindle_emails dict with the ones in the database
-def copy_data_from_database_to_dictionary():
+def refresh_data_from_database_to_dictionary():
     connection = sqlite3.connect('user_data.db')
     cursor = connection.cursor()
     cursor.execute("SELECT user_id, kindle_email FROM users")
@@ -32,7 +36,20 @@ def copy_data_from_database_to_dictionary():
     for row in rows:
         user_id, kindle_email = row
         user_kindle_emails[user_id] = kindle_email
-copy_data_from_database_to_dictionary()
+refresh_data_from_database_to_dictionary()
+
+#Method that refreshes the user_kindle_emails dict specific data from the user
+def copy_data_from_database_to_dictionary(user_email):
+    connection = sqlite3.connect('user_data.db')
+    cursor = connection.cursor()
+    query = 'SELECT user_id, kindle_email FROM users WHERE kindle_email = ?'
+    cursor.execute(query, (user_email,))
+    rows = cursor.fetchall()
+    connection.close()
+    for row in rows:
+        user_id, kindle_email = row
+        user_kindle_emails[user_id] = kindle_email
+
 
 #Method that sets the email of certain user_id in the database
 def set_email_to_db(user, email):
@@ -58,9 +75,9 @@ def set_kindle_email(update: Update, context: CallbackContext):
 # Function to save Kindle email address and move to the search state
 def save_kindle_email(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
-    email = update.message.text
-    set_email_to_db(user_id, email)
-    copy_data_from_database_to_dictionary()
+    user_email = update.message.text
+    set_email_to_db(user_id, user_email)
+    copy_data_from_database_to_dictionary(user_email)
     update.message.reply_text("Kindle email address set to: " + update.message.text)
     update.message.reply_text("Remember to add green.panda.3.1415@gmail.com as a trusted email account on your kindle page preferences")
     update.message.reply_text("You can now use /search to start searching for books.")
@@ -69,7 +86,7 @@ def save_kindle_email(update: Update, context: CallbackContext):
 # Command handler to search for books
 def search(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
-    copy_data_from_database_to_dictionary()
+    copy_data_from_database_to_dictionary(user_email)
     if user_id not in user_kindle_emails:
         update.message.reply_text("Please set your Kindle email address using /set_kindle_email before searching for books.")
         return SET_KINDLE_EMAIL  # Go back to SET_KINDLE_EMAIL state
@@ -112,6 +129,32 @@ def receive_book_query(update: Update, context: CallbackContext):
     except Exception as e:
         update.message.reply_text(f"An error occurred: {str(e)}")
 
+#Define a function to handle book donations
+def donate(update: Update, context: CallbackContext):
+    update.message.reply_text('Great! what is the name of the book that you want to donate?')
+    update.message.reply_text('Write the name of the book and the author, separated with a semicolon, like this:')
+    update.message.reply_text('books name; authors name')
+    update.message.reply_text('or just send the books name, in case you dont know the authors name')
+    return CHECK_BOOK
+
+def check_book_locally(update: Update, context: CallbackContext):
+    update.message.reply_text("I'll check if I have it already")
+    book_data = Library.getBookDataFromQuery(update.message.text)
+    if Library.isInTheLibrary(book_data):
+       update.message.reply_text("Don't send it, I already have it")
+    else:
+       update.message.reply_text("I don't have that book yet. ")
+       update.message.reply_text("Send me the ebook file that you want to donate!")
+       return DONATION
+
+#Define a function to save book donations into the local library
+def save_donated_book(update: Update, context: CallbackContext):
+    file_id = update.message.document.file_id
+    file = context.bot.get_file(file_id)
+    libary_path = Library.LIBRARY_PATH
+    file.download(f"libary_path/{update.message.document.file_name}")
+    update.message.reply_text('Thank you for your book donation!')
+
 # Error handler
 def error(update: Update, context: CallbackContext):
     logging.error(f"Update '{update}' caused error '{context.error}'")
@@ -125,6 +168,17 @@ kindle_email_conversation = ConversationHandler(
     },
     fallbacks=[]
 )
+
+# Create a ConversationHandler for handling book donations
+donate_book_conversation = ConversationHandler(
+    entry_points=[CommandHandler("donate", donate)],
+    states={
+        DONATION: [MessageHandler(Filters.text & ~Filters.command, save_donated_book)],
+        CHECK_BOOK: [MessageHandler(Filters.text & ~Filters.command, check_book_locally)]
+    },
+    fallbacks=[]
+)
+
 # Set up command and message handlers and conversation handler
 dispatcher.add_handler(kindle_email_conversation)
 dispatcher.add_error_handler(error)
