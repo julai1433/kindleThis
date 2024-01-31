@@ -65,7 +65,8 @@ def start(update: Update, context: CallbackContext):
     if user_id not in user_kindle_emails:
         update.message.reply_text("Welcome to kindleThis Bot! Please use /set_kindle_email to set your Kindle email address.")
     else:
-        update.message.reply_text("Welcome back! You can now use /search to start searching for books.")
+        update.message.reply_text(f"Welcome back {user_kindle_emails[user_id]}! You can now use /search to start searching for books, like this:")
+        update.message.reply_text('\"Book ; Author\", if you don\'t know the author just give me the book name')
 
 # Command handler to set Kindle email
 def set_kindle_email(update: Update, context: CallbackContext):
@@ -80,7 +81,8 @@ def save_kindle_email(update: Update, context: CallbackContext):
     copy_data_from_database_to_dictionary(user_email)
     update.message.reply_text("Kindle email address set to: " + update.message.text)
     update.message.reply_text("Remember to add green.panda.3.1415@gmail.com as a trusted email account on your kindle page preferences")
-    update.message.reply_text("You can now use /search to start searching for books.")
+    update.message.reply_text("You can now use /search to start searching for books, like this:")
+    update.message.reply_text('\"Book ; Author\", if you don\'t know the author just give me the book name')
     return SEARCH_BOOK  # Move to the SEARCH_BOOK state
 
 # Command handler to search for books
