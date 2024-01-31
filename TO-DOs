@@ -2,9 +2,12 @@
 CRITICAL (Wont' work at all til this is done):
 
 FUNCTIONAL (wont' work well until you do it):
+- Create a command to retrieve kindle email, so the user can know if they have to update it.
+- Review workflow to assure some commands (like /set_kindle_email) can be invoken in the middle of the processing of another command (like /search)
 - Put this projecct in a server.
 - Create a docker image for this project and set the CI/CD from its github repo.
 - Figure out the best way to access remote storage for the Library, so the server will only take care of the bot, not the library storage.
+
 
 OPTIMAL (would be cool):
 - If the book is found, take a screenshot and send it to the user to confirm it's the book they're looking for.
