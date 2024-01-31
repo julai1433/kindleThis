@@ -15,9 +15,9 @@ from selenium.webdriver.firefox.options import Options
 import pathlib
 import os
 
-# Dynamically set the BASE_PATH
-BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-DOWNLOADS_PATH = os.path.join( BASE_PATH, '/Library/')
+# Dynamically set the ROOT_PATH
+ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+DOWNLOADS_PATH = os.path.join( ROOT_PATH, '/Library/')
 
 def CallBrowser(url, logger=None, silent_mode=False):
     print('Configuring Firefox...')

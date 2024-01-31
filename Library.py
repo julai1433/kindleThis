@@ -21,9 +21,9 @@ from decouple import AutoConfig
 config = AutoConfig('.env')
 
 
-# Dynamically set the BASE_PATH
-BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-LIBRARY = os.path.join( BASE_PATH, '/Library/')
+# Dynamically set the ROOT_PATH
+ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+LIBRARY_PATH = os.path.join( ROOT_PATH, '/Library/')
 BOOKS_SUPPLIER = "https://ww3.lectulandia.com/"
 BIONIC_SITE = "https://app.bionic-reading.com/"
 
@@ -47,7 +47,7 @@ def searchAndDownload(book_data, silent_mode=HEADLESS_MODE):
     book_author = book_data[1]
     try:
         print("Searching \""+book_name+"\" from "+book_author+" ...")
-        if os.path.exists(LIBRARY+'/'+book_name+'/'+book_name+'.epub'):
+        if os.path.exists(LIBRARY_PATH+'/'+book_name+'/'+book_name+'.epub'):
             print("Book was already in your library")
             return True
         output = False
@@ -80,11 +80,11 @@ def searchAndDownload(book_data, silent_mode=HEADLESS_MODE):
                         mS.GoToLastTab()
                         time.sleep(6)
                         mS.ClickById("downloadB")
-                        os.makedirs(LIBRARY+'/'+book_name, exist_ok=True)
+                        os.makedirs(LIBRARY_PATH+'/'+book_name, exist_ok=True)
                         print("Downloading ...")
                         file_name = mS.GetDownLoadedFileName(180)
                         print("Downloaded as: "+file_name)
-                        shutil.move(LIBRARY+'/'+file_name, LIBRARY+'/'+book_name+'/'+book_name+'.epub')
+                        shutil.move(LIBRARY_PATH+'/'+file_name, LIBRARY_PATH+'/'+book_name+'/'+book_name+'.epub')
                         output = True
                         break
             else:
@@ -95,7 +95,17 @@ def searchAndDownload(book_data, silent_mode=HEADLESS_MODE):
     except Exception as e:
         print(e)
         return False
-    
+
+def isInTheLibrary(book_data):
+    book_name = book_data[0]
+    book_author = book_data[1]
+    if os.path.exists(LIBRARY_PATH+'/'+book_name+'/'+book_name+'.epub'):
+        return True
+    else:
+        return False
+        
+
+
 # - BIONIC.
 #     - Description: Takes an ebook file from the library and replaces it for a version with bionic reading font.
 #     - Input: None
@@ -107,7 +117,7 @@ def bionicBook(book_name):
 #         - Once it's done, download the new ebook file to the library.
 #         - Rename it with the actual name.
     print("Processing the book with Bionic Reading ...")
-    if os.path.exists(LIBRARY+'/'+book_name+'/'+book_name+'-br.epub'):
+    if os.path.exists(LIBRARY_PATH+'/'+book_name+'/'+book_name+'-br.epub'):
         print("Book was already in your Bionic Reading library")
         return True
     output = False
@@ -124,7 +134,7 @@ def bionicBook(book_name):
         mS.ClickById("content-tab-2")
         # mS.ClickByPath("/html/body/div/div[1]/div[2]/div/div/div/div/button")
         inputFile = mS.FindElementByPath("/html/body/div/div[1]/div[2]/div/div/div/div/input")
-        inputFile.send_keys(LIBRARY+'/'+book_name+'/'+book_name+'.epub')
+        inputFile.send_keys(LIBRARY_PATH+'/'+book_name+'/'+book_name+'.epub')
         mS.ClickByPath("/html/body/div/div[1]/header/div/div/div[2]/div/button")                #Process
         mS.ClickByPath("/html/body/div[2]/div[3]/div/div/div/label/span[1]/span[1]/input")      #Accept License Agreement
         mS.ClickByPath("/html/body/div[2]/div[3]/div/div/button")                               #Continue
@@ -162,7 +172,7 @@ def bionicBook(book_name):
                 mS.ClickByPath("/html/body/div[2]/div[3]/div/div/button")
                 # mS.ClickByPath("/html/body/div[2]/div[3]/div/div/button")
                 file_name = mS.GetDownLoadedFileName(180)
-                shutil.move(LIBRARY+'/'+file_name, LIBRARY+'/'+book_name+'/'+book_name+'-br'+'.epub')
+                shutil.move(LIBRARY_PATH+'/'+file_name, LIBRARY_PATH+'/'+book_name+'/'+book_name+'-br'+'.epub')
                 print("Done!")
                 output = True
             else:
@@ -198,10 +208,10 @@ def sendToKindle(book_name, kindle_address = KINDLE_EMAIL):
 
     # Attach the ebook file
     
-    file_path = LIBRARY+f"/{book_name}/{book_name}.epub"
+    file_path = LIBRARY_PATH+f"/{book_name}/{book_name}.epub"
     download_name = book_name
 
-    file_path_bionic = LIBRARY+f"/{book_name}/{book_name}-br.epub"
+    file_path_bionic = LIBRARY_PATH+f"/{book_name}/{book_name}-br.epub"
     if os.path.exists(file_path_bionic):
         file_path = file_path_bionic
         download_name = book_name + '-br'
